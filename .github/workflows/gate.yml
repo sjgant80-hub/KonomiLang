@@ -1,0 +1,22 @@
+name: witness-gate
+# Un-forgeable proof, run on GitHub's own runner: the unit tests prove the sovereign
+# KonomiLang interpreter does what it claims, and the witness mutation gate proves those
+# tests actually guard it (no test-theatre). A green run here is the real proof of the code.
+on:
+  push:
+    paths: [konomi.mjs, konomi.test.mjs, witness.baseline.json, .witness/**, .github/workflows/gate.yml]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: unit tests — the interpreter does what it claims
+        run: node --test konomi.test.mjs
+      - name: witness mutation gate — the tests actually guard the kernel (CLEAN or fail)
+        run: node .witness/witness.mjs mutate konomi.mjs --cap 500 --test node --test konomi.test.mjs

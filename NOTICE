@@ -1,0 +1,18 @@
+KonomiLang (sovereign)
+Copyright (c) 2026 Simon Gant — the FallForge estate (sjgant80-hub)
+
+The estate's own code and additions (the sovereign in-browser interpreter
+konomi.mjs, the single-file PWA, and the symbolic-compression measurement) are
+licensed under the MIT License (see LICENSE). The MIT license covers the estate's
+own code only.
+
+PROVENANCE
+
+- The KonomiLang language itself — the OG language for AI interactions (let / ask /
+  if) — is Thomas Frumkin's, first published at https://github.com/teslasolar/KonomiLang
+  (2024). The base language is his; this repository's sovereign interpreter and
+  compression measurement are the estate's upgrade, built with his permission and on
+  the Konomi architecture he created. Powered by the Konomi architecture, created by
+  Thomas Frumkin.
+- The MACCubeFACE / Konomi Cube lattice (the seven-ring structure) is Thomas Frumkin's
+  (MianoCube, https://github.com/teslasolar/MianoCube); it remains his.

@@ -1,0 +1,27 @@
+[
+  {
+    "mutation": "< → <=",
+    "snippet": "if (c === '/' && src[i + 1] === '/') { while (i < n && src[i] !== '\\n') i += 1; continue; ",
+    "reason": "comment-skip loop bound; the i<n bound reads one index past the end only when the inner guard (the char test, or the >=n check that follows) has already rejected src[n]===undefined, so i<n and i<=n accept exactly the same inputs. Proven-equivalent mutant, not unguarded code."
+  },
+  {
+    "mutation": "< → <=",
+    "snippet": "while (i < n && src[i] !== '\"') { s += src[i]; i += 1; }",
+    "reason": "string-scan loop bound; the i<n bound reads one index past the end only when the inner guard (the char test, or the >=n check that follows) has already rejected src[n]===undefined, so i<n and i<=n accept exactly the same inputs. Proven-equivalent mutant, not unguarded code. An unterminated string still errors via the i>=n check either way."
+  },
+  {
+    "mutation": "< → <=",
+    "snippet": "while (i < n && (isDigit(src[i]) || src[i] === '.')) { num += src[i]; i += 1; }",
+    "reason": "number-scan loop bound; the i<n bound reads one index past the end only when the inner guard (the char test, or the >=n check that follows) has already rejected src[n]===undefined, so i<n and i<=n accept exactly the same inputs. Proven-equivalent mutant, not unguarded code."
+  },
+  {
+    "mutation": "< → <=",
+    "snippet": "while (i < n && isIdentPart(src[i])) { id += src[i]; i += 1; }",
+    "reason": "identifier-scan loop bound; the i<n bound reads one index past the end only when the inner guard (the char test, or the >=n check that follows) has already rejected src[n]===undefined, so i<n and i<=n accept exactly the same inputs. Proven-equivalent mutant, not unguarded code."
+  },
+  {
+    "mutation": "&& → ||",
+    "snippet": "const atBlockEnd = () => peek().t === 'op' && peek().v === '}';",
+    "reason": "block-end test: a } closes a block only as the OP } (never the string \"}\"), so && is required; && vs || differ only for an op-that-is-not-} inside a block, which both forms turn into a parse error (statement() throws vs eat(}) throws). Proven-equivalent; the KILLABLE outer && is on the block() line and is caught by the if/else tests."
+  }
+]

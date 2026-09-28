@@ -1,1 +1,125 @@
-<!doctype html><html><head><title>KonomiLang</title></head><body><h1>KonomiLang</h1><p>MIT · AI-Native Solutions</p></body></html>
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>KonomiLang — sovereign</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="KonomiLang — Thomas Frumkin's language for AI interactions, brought to the estate bar: a sovereign interpreter that runs in your browser tab, zero dependencies, with an honestly-measured symbolic-compression layer.">
+<meta name="theme-color" content="#0b0e14">
+<style>
+  :root{--bg:#f7f8fa;--panel:#fff;--panel2:#f1f4f8;--ink:#0d1520;--muted:#576373;--faint:#8a94a3;--line:#e3e8ef;--accent:#3b5bdb;--accent2:#7048e8;--accent-ink:#fff;--ok:#0c9463;--warn:#d9880a;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,system-ui,sans-serif;--mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;--maxw:960px;--r:14px}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#080b11;--panel:#111722;--panel2:#161d2a;--ink:#e8eef6;--muted:#8d99a9;--faint:#5b6675;--line:#1e2735;--accent:#5c7cfa;--accent2:#9775fa;--accent-ink:#080b11;--ok:#2fbd85;--warn:#e6a23c}}
+  :root[data-theme=dark]{--bg:#080b11;--panel:#111722;--panel2:#161d2a;--ink:#e8eef6;--muted:#8d99a9;--faint:#5b6675;--line:#1e2735;--accent:#5c7cfa;--accent2:#9775fa;--accent-ink:#080b11;--ok:#2fbd85;--warn:#e6a23c}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  a{color:var(--accent)}code{font-family:var(--mono);font-size:.88em;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:.05em .35em}
+  h1{font-size:clamp(1.9rem,5vw,2.7rem);letter-spacing:-.03em;margin:.3rem 0 .3rem;font-weight:850}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  header{padding:52px 0 20px}
+  header p.lead{color:var(--muted);font-size:1.04rem;max-width:72ch}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .badge{font-family:var(--mono);font-size:.72rem;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:.3rem .72rem;background:var(--panel)}
+  .badge b{color:var(--ok)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+  .card h2{font-size:1.05rem;margin:0 0 .5rem}
+  textarea{width:100%;min-height:200px;font-family:var(--mono);font-size:.86rem;line-height:1.55;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--ink);resize:vertical}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .btn{padding:.55rem 1rem;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-size:.9rem;font-weight:600;cursor:pointer;font-family:var(--sans)}
+  .btn:hover{filter:brightness(1.08)}.btn.ghost{background:var(--panel);color:var(--ink);border-color:var(--line)}
+  .out{margin-top:10px;font-family:var(--mono);font-size:.84rem}
+  .out .ask{padding:8px 11px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;background:var(--panel2);margin-bottom:6px}
+  .out .ask b{color:var(--accent);font-size:.72rem;letter-spacing:.05em}
+  .out .err{color:var(--warn);border-left-color:var(--warn)}
+  .vars{color:var(--muted);font-size:.8rem;margin-top:8px}
+  .metric{display:flex;gap:20px;flex-wrap:wrap;margin-top:12px}
+  .metric b{display:block;font-size:1.5rem;font-weight:850;color:var(--ink);font-variant-numeric:tabular-nums}
+  .metric span{color:var(--muted);font-size:.76rem}
+  .note{color:var(--muted);font-size:.86rem;margin:.5rem 0 0;max-width:72ch}
+  .theme{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.8rem;float:right;margin-top:14px}
+  footer{padding:32px 0;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);margin-top:26px}
+  section{padding:20px 0}
+</style>
+
+<div class="wrap">
+<button class="theme" id="theme" type="button">Theme</button>
+<header>
+  <span class="eyebrow">KonomiLang · sovereign</span>
+  <h1>Thomas Frumkin's language for AI, run in your tab.</h1>
+  <p class="lead">KonomiLang is a small language for AI interactions — <code>let</code>, <code>ask</code>, <code>if</code>, arithmetic. This is the OG language brought to the estate bar: a real interpreter that runs entirely in your browser, zero dependencies, kernel-backed by the mutation-gated <code>konomi.mjs</code>. Below it, a symbolic-compression layer — and its ratio <em>measured</em>, not asserted.</p>
+  <div class="badges">
+    <span class="badge">interpreter · <b>witness-gated</b></span>
+    <span class="badge">zero dependencies · runs offline</span>
+    <span class="badge">base: Thomas Frumkin's KonomiLang · MIT</span>
+  </div>
+</header>
+
+<section class="grid">
+  <div class="card">
+    <h2>1 · Write KonomiLang</h2>
+    <textarea id="src">let name = "Alex"
+let age = 25
+
+ask "Introduce yourself to " + name
+
+if (age >= 18) {
+  ask "What career options suit " + name + "?"
+} else {
+  ask "What subjects should " + name + " study?"
+}
+
+let total = 2 + 3 * 4
+ask "The total is " + total</textarea>
+    <div class="row"><button class="btn" id="run" type="button">Run →</button> <span id="runState" class="mono" style="color:var(--muted);font-size:.8rem"></span></div>
+    <div class="out" id="out"></div>
+    <div class="vars" id="vars"></div>
+  </div>
+  <div class="card">
+    <h2>2 · Symbolic compression (measured)</h2>
+    <p class="note" style="margin-top:0">Thomas's <em>&kappa;&Psi;&infin;</em> idea: one symbol expands to a whole keyword. Write the compact form; it expands to KonomiLang and runs. The ratio is measured live — the honest number for this program.</p>
+    <textarea id="csrc" style="min-height:120px">§ g = "hi"
+≫ g
+¿ (1 == 1) { ≫ "yes" } ¬ { ≫ "no" }</textarea>
+    <div class="row"><button class="btn ghost" id="crun" type="button">Expand · measure · run →</button></div>
+    <div class="metric" id="metric"></div>
+    <div class="out" id="cout"></div>
+    <p class="note"><b>Legend:</b> <code>§</code>=let · <code>≫</code>=ask · <code>¿</code>=if · <code>¬</code>=else. Honest scope: this measures keyword-token compression; a higher ratio needs whole-pattern tokens (the &kappa;&Psi;&infin; design's direction) — the number you see is the real one for what's implemented, never a fixed claim.</p>
+  </div>
+</section>
+
+<footer class="wrap">
+  <b>KonomiLang</b> — base language by <a href="https://github.com/teslasolar/KonomiLang" target="_blank" rel="noopener">Thomas Frumkin</a> (the OG Konomi language, 2024); this sovereign interpreter + compression measurement are the estate's upgrade, MIT (see <a href="LICENSE" target="_blank" rel="noopener">LICENSE</a> + <a href="NOTICE" target="_blank" rel="noopener">NOTICE</a>). Built on the Konomi architecture, created by Thomas Frumkin; the MACCubeFACE lattice (MianoCube) is his. — Kar (karma-didy)
+</footer>
+</div>
+
+<script type="module">
+import { run, expand, compressionRatio } from './konomi.mjs';
+const $=id=>document.getElementById(id);
+(function(){try{const s=localStorage.getItem('kl-theme');if(s)document.documentElement.setAttribute('data-theme',s);}catch(e){}
+  $('theme').onclick=()=>{const c=document.documentElement.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('kl-theme',n)}catch(e){}};})();
+
+function render(outId, varsId, r){
+  const out=$(outId); out.innerHTML='';
+  if(!r.ok){const d=document.createElement('div');d.className='ask err';d.innerHTML='<b>ERROR</b><br>'+r.error;out.appendChild(d);if(varsId)$(varsId).textContent='';return;}
+  for(const a of r.asks){const d=document.createElement('div');d.className='ask';d.innerHTML='<b>ASK →</b> '+a.replace(/</g,'&lt;');out.appendChild(d);}
+  if(!r.asks.length){const d=document.createElement('div');d.className='ask';d.textContent='(no asks)';out.appendChild(d);}
+  if(varsId)$(varsId).textContent='vars: '+JSON.stringify(r.vars);
+}
+$('run').onclick=()=>{const r=run($('src').value);render('out','vars',r);$('runState').textContent=r.ok?('✓ '+r.asks.length+' prompt(s)'):'✕ error';};
+$('crun').onclick=()=>{
+  const c=$('csrc').value;
+  const expanded=expand(c);
+  const cr=compressionRatio(c);
+  const m=$('metric'); m.innerHTML='';
+  if(cr.ok){
+    for(const [lbl,val] of [['compact chars',cr.compactChars],['expanded chars',cr.expandedChars],['ratio',cr.ratio.toFixed(2)+'×']]){
+      const d=document.createElement('div');d.innerHTML='<b>'+val+'</b><span>'+lbl+'</span>';m.appendChild(d);
+    }
+  }
+  render('cout',null,run(expanded));
+};
+// run once on load so the page shows it working
+$('run').click();
+</script>
+</html>
